@@ -1,0 +1,49 @@
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #333;
+    color: #fff;
+    position: absolute;
+    top: 0;
+    left: -200px; 
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    transition: left 0.3s ease; 
+}
+
+.open {
+    left: 0; 
+}
+
+.toggle-button {
+    position: absolute;
+    top: 60px;
+    right: -40px; 
+    background: none;
+    border: none;
+    color: #0f0cd4;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 1; 
+    
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 20px 0;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
