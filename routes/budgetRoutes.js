@@ -19,13 +19,13 @@ router.get('/:id', getBudget, (req, res) => {
 
 // POST a new budget
 router.post('/', async (req, res) => {
-    const { type, amount, startDate, endDate } = req.body;
+    const { type, amount, year, month } = req.body;
 
     const budget = new Budget({
         type,
         amount,
-        startDate,
-        endDate // Include endDate in the budget object
+        year: type === 'yearly' ? year : undefined,
+        month: type === 'monthly' ? month : undefined
     });
 
     try {
@@ -44,11 +44,11 @@ router.patch('/:id', getBudget, async (req, res) => {
     if (req.body.amount != null) {
         res.budget.amount = req.body.amount;
     }
-    if (req.body.startDate != null) {
-        res.budget.startDate = req.body.startDate;
+    if (req.body.year != null) {
+        res.budget.year = req.body.year;
     }
-    if (req.body.endDate != null) {
-        res.budget.endDate = req.body.endDate;
+    if (req.body.month != null) {
+        res.budget.month = req.body.month;
     }
 
     try {
@@ -61,9 +61,8 @@ router.patch('/:id', getBudget, async (req, res) => {
 
 // DELETE a budget
 router.delete('/:id', async (req, res) => {
-    const budgetId = req.params.id;
     try {
-        const deletedBudget = await Budget.findByIdAndDelete(budgetId);
+        const deletedBudget = await Budget.findByIdAndDelete(req.params.id);
         if (!deletedBudget) {
             return res.status(404).json({ message: 'Budget not found' });
         }
@@ -87,16 +86,6 @@ async function getBudget(req, res, next) {
 
     res.budget = budget;
     next();
-}
-async function updateSpentAmount(budgetId) {
-    try {
-        const expenses = await Expense.find({ budget: budgetId });
-        const totalSpent = expenses.reduce((acc, curr) => acc + curr.amount, 0);
-
-        await Budget.findByIdAndUpdate(budgetId, { spent: totalSpent });
-    } catch (error) {
-        console.error('Error updating spent amount:', error.message);
-    }
 }
 
 module.exports = router;

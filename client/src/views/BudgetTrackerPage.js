@@ -72,6 +72,11 @@ const BudgetTrackerPage = () => {
         };
     }, []);
 
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
     const calculateMonthlyData = (expenses, budgets) => {
         const monthlyExpenses = {};
         const monthlyBudgets = {};
@@ -79,7 +84,9 @@ const BudgetTrackerPage = () => {
         // Calculate monthly expenses
         expenses.forEach(expense => {
             const date = new Date(expense.date);
-            const monthYear = `${date.getMonth() + 1}-${date.getFullYear()}`;
+            const monthName = monthNames[date.getMonth()];
+            const year = date.getFullYear();
+            const monthYear = `${monthName}-${year}`;
 
             if (!monthlyExpenses[monthYear]) {
                 monthlyExpenses[monthYear] = 0;
@@ -89,21 +96,15 @@ const BudgetTrackerPage = () => {
 
         // Calculate monthly budgets
         budgets.forEach(budget => {
-            const startDate = new Date(budget.startDate);
-            const endDate = budget.endDate ? new Date(budget.endDate) : new Date();
+            if (budget.type !== 'yearly') { // Exclude yearly budgets
+                const monthName = budget.month;
+                const year = budget.year;
+                const monthYear = `${monthName}-${year}`;
 
-            let currentDate = new Date(startDate);
-
-            while (currentDate <= endDate) {
-                const monthYear = `${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
-                
                 if (!monthlyBudgets[monthYear]) {
                     monthlyBudgets[monthYear] = 0;
                 }
-                monthlyBudgets[monthYear] += budget.amount / ((endDate.getFullYear() - startDate.getFullYear()) * 12 + endDate.getMonth() - startDate.getMonth() + 1);
-
-                // Move to the next month
-                currentDate.setMonth(currentDate.getMonth() + 1);
+                monthlyBudgets[monthYear] += budget.amount;
             }
         });
 
@@ -124,12 +125,14 @@ const BudgetTrackerPage = () => {
         });
 
         budgets.forEach(budget => {
-            const year = new Date(budget.startDate).getFullYear();
+            if (budget.type === 'yearly') { // Include only yearly budgets
+                const year = budget.year;
 
-            if (!yearlyBudgets[year]) {
-                yearlyBudgets[year] = 0;
+                if (!yearlyBudgets[year]) {
+                    yearlyBudgets[year] = 0;
+                }
+                yearlyBudgets[year] += budget.amount;
             }
-            yearlyBudgets[year] += budget.amount;
         });
 
         return { expenses: yearlyExpenses, budgets: yearlyBudgets };
@@ -178,8 +181,8 @@ const BudgetTrackerPage = () => {
                                 <li key={budget._id}>
                                     <p>Type: {budget.type}</p>
                                     <p>Amount: ${budget.amount}</p>
-                                    <p>Start Date: {new Date(budget.startDate).toLocaleDateString()}</p>
-                                    <p>End Date: {budget.endDate ? new Date(budget.endDate).toLocaleDateString() : 'N/A'}</p>
+                                    <p>Month: {budget.month || 'N/A'}</p>
+                                    <p>Year: {budget.year || 'N/A'}</p>
                                 </li>
                             ))}
                         </ul>

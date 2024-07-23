@@ -4,13 +4,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import './budget.css'; // Import the newly created budget styles
 import Sidebar from './Sidebar';
 
+const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 function BudgetDashboard() {
     const [budgets, setBudgets] = useState([]);
     const [formData, setFormData] = useState({
         type: 'monthly',
         amount: '',
-        startDate: '',
-        endDate: '', // Added endDate field
+        year: '',
+        month: ''
     });
     const [editingBudgetId, setEditingBudgetId] = useState(null);
     const navigate = useNavigate();
@@ -34,36 +39,28 @@ function BudgetDashboard() {
 
     const onChange = (e) => {
         const { name, value } = e.target;
-
-        // Automatically set endDate for yearly type when startDate is selected
-        if (name === 'startDate' && formData.type === 'yearly') {
-            const startDate = new Date(value);
-            const endDate = new Date(startDate.getFullYear() + 1, startDate.getMonth(), startDate.getDate());
-            const formattedEndDate = endDate.toISOString().slice(0, 10); // Format as yyyy-mm-dd
-
-            setFormData({
-                ...formData,
-                startDate: value,
-                endDate: formattedEndDate,
-            });
-        } else {
-            setFormData({ ...formData, [name]: value });
-        }
+        setFormData({ ...formData, [name]: value });
     };
 
     const onSubmit = async (e) => {
         e.preventDefault();
         try {
+            const budgetData = {
+                ...formData,
+                year: formData.type === 'yearly' ? formData.year : undefined,
+                month: formData.type === 'monthly' ? formData.month : undefined
+            };
+
             if (editingBudgetId) {
-                await api.patch(`/budgets/${editingBudgetId}`, formData);
+                await api.patch(`/budgets/${editingBudgetId}`, budgetData);
                 setEditingBudgetId(null);
                 alert('Budget updated successfully');
             } else {
-                await api.post('/budgets', formData);
+                await api.post('/budgets', budgetData);
                 alert('Budget added successfully');
             }
             getBudgets();
-            setFormData({ type: 'monthly', amount: '', startDate: '', endDate: '' }); // Reset form data
+            setFormData({ type: 'monthly', amount: '', year: '', month: '' }); // Reset form data
         } catch (error) {
             console.error('Error saving budget:', error);
             alert('Error saving budget');
@@ -76,8 +73,8 @@ function BudgetDashboard() {
             setFormData({
                 type: selectedBudget.type,
                 amount: selectedBudget.amount,
-                startDate: selectedBudget.startDate,
-                endDate: selectedBudget.endDate || '',
+                year: selectedBudget.year || '',
+                month: selectedBudget.month || ''
             });
             setEditingBudgetId(budgetId);
         }
@@ -119,37 +116,36 @@ function BudgetDashboard() {
                             required
                         />
                     </label>
-                    <label>
-                        Start Date:
-                        <input
-                            type="date"
-                            name="startDate"
-                            value={formData.startDate}
-                            onChange={onChange}
-                            required
-                        />
-                    </label>
-                    {formData.type === 'yearly' && ( // Render only for yearly type
+                    {formData.type === 'yearly' && (
                         <label>
-                            End Date:
+                            Year:
                             <input
-                                type="date"
-                                name="endDate"
-                                value={formData.endDate}
+                                type="number"
+                                name="year"
+                                value={formData.year}
                                 onChange={onChange}
-                                disabled={formData.type !== 'yearly'} // Disable if type is not yearly
+                                required
+                                min="2024"
+                                max="2100"
                             />
                         </label>
                     )}
-                    {formData.type === 'monthly' && ( // Render only for monthly type
+                    {formData.type === 'monthly' && (
                         <label>
-                            End Date:
-                            <input
-                                type="date"
-                                name="endDate"
-                                value={formData.endDate}
+                            Month:
+                            <select
+                                name="month"
+                                value={formData.month}
                                 onChange={onChange}
-                            />
+                                required
+                            >
+                                <option value="">Select Month</option>
+                                {monthNames.map((month) => (
+                                    <option key={month} value={month}>
+                                        {month}
+                                    </option>
+                                ))}
+                            </select>
                         </label>
                     )}
                     <button type="submit">{editingBudgetId ? 'Update Budget' : 'Add Budget'}</button>
@@ -160,8 +156,7 @@ function BudgetDashboard() {
                         <tr>
                             <th>Type</th>
                             <th>Amount</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
+                            <th>Year/Month</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -170,8 +165,13 @@ function BudgetDashboard() {
                             <tr key={budget._id}>
                                 <td>{budget.type}</td>
                                 <td>${budget.amount.toFixed(2)}</td>
-                                <td>{new Date(budget.startDate).toLocaleDateString()}</td>
-                                <td>{budget.endDate ? new Date(budget.endDate).toLocaleDateString() : '-'}</td>
+                                <td>
+                                    {budget.type === 'yearly'
+                                        ? budget.year
+                                        : budget.type === 'monthly'
+                                        ? budget.month
+                                        : ''}
+                                </td>
                                 <td>
                                     <button onClick={() => editBudget(budget._id)}>Edit</button>
                                     <button onClick={() => deleteBudget(budget._id)}>Delete</button>

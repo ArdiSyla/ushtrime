@@ -19,11 +19,12 @@
     display: grid;
     gap: 15px;
     grid-template-columns: 1fr 1fr; /* Adjust grid columns for better form layout */
-    
 }
 
 .budget-form label {
     font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
 }
 
 .budget-form select,
@@ -38,6 +39,7 @@
 }
 
 .budget-form button {
+    grid-column: span 2;
     padding: 12px 20px;
     border: none;
     background-color: #007bff;
@@ -46,8 +48,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 14px;
-    margin-left: 50%;
-    
+    margin: 0 auto;
 }
 
 .budget-form button:hover {

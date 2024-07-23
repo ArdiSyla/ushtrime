@@ -1,4 +1,3 @@
-// models/Budget.js
 const mongoose = require('mongoose');
 
 const budgetSchema = new mongoose.Schema({
@@ -11,14 +10,18 @@ const budgetSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    startDate: {
-        type: Date,
-        required: true
+    year: {
+        type: Number,
+        required: function() { return this.type === 'yearly'; }
     },
-    endDate: {
-        type: Date // Add endDate field to the schema
+    month: {
+        type: String,
+        required: function() { return this.type === 'monthly'; },
+        enum: [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ]
     }
-    
 });
 
 module.exports = mongoose.model('Budget', budgetSchema);
