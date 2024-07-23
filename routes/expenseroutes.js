@@ -2,24 +2,48 @@ const express = require('express');
 const Expense = require('../Models/Expense');
 const verifyToken = require('../verifyToken');
 const router = express.Router();
+const Budget = require('../Models/Budget'); 
 
 
 
 router.post('/', verifyToken, async (req, res) => {
-    
-    console.log('post expense');
-
     const { category, amount, description, date, paid } = req.body;
 
+    if (!category || !amount || !date) {
+        return res.status(400).json({ message: 'Category, amount, and date are required fields.' });
+    }
+
     try {
+        const expenseDate = new Date(date);
+        const currentYear = expenseDate.getFullYear();
 
+        console.log('Expense Date:', expenseDate);
+        console.log('Current Year:', currentYear);
 
-//me shtu ni check a je tu e tejkalu bugjetin e planifikum
+        const yearlyBudget = await Budget.findOne({
+            type: 'yearly',
+            year: currentYear
+        });
 
-//tek bugjeti me lan veq me shtu mujore apo vjetore
+        console.log('Yearly Budget:', yearlyBudget);
 
-//agonb
+        if (!yearlyBudget) {
+            return res.status(400).json({ message: 'Yearly budget is not defined for the current year.' });
+        }
 
+        const totalExpenses = await Expense.aggregate([
+            { $match: { user: req.user.id, date: { $gte: new Date(currentYear, 0, 1), $lte: new Date(currentYear, 11, 31) } } },
+            { $group: { _id: null, total: { $sum: "$amount" } } }
+        ]);
+
+        const totalSpent = totalExpenses.length > 0 ? totalExpenses[0].total : 0;
+
+        console.log('Total Spent:', totalSpent);
+        console.log('Yearly Budget Amount:', yearlyBudget.amount);
+
+        if (totalSpent + amount > yearlyBudget.amount) {
+            return res.status(400).json({ message: 'Adding this expense would exceed your yearly budget.' });
+        }
 
         const newExpense = new Expense({
             user: req.user.id,
@@ -32,6 +56,7 @@ router.post('/', verifyToken, async (req, res) => {
         await newExpense.save();
         res.status(201).json(newExpense);
     } catch (error) {
+        console.error('Server error:', error);
         res.status(400).json({ message: error.message });
     }
 });

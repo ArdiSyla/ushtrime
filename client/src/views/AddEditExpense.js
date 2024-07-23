@@ -43,7 +43,7 @@ function AddEditExpense() {
     const onSubmit = async e => {
         e.preventDefault();
         try {
-            if(id) {
+            if (id) {
                 await api.put('/expenses/' + id, formData);  
                 alert('Expense modified');
                 navigate('/dashboard');
@@ -53,8 +53,8 @@ function AddEditExpense() {
                 navigate('/dashboard');
             }
         } catch (error) {
-            console.error('Expense save error', error);
-            alert('Error saving expense');
+            console.error('Expense save error', error.response.data);
+            alert('Error saving expense: ' + error.response.data.message);
         }
     };
 
