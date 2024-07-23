@@ -6,6 +6,11 @@ import Dashboard from './views/Dashboard';
 import AddEditIncome from './views/AddEditIncome';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import IncomeDashboard from './views/IncomeDashboard';
+import BudgetDashboard from './views/BudgetDashboard';
+import BudgetTrackerPage from './views/BudgetTrackerPage';
+
+
+
 
 function App() {
   return (
@@ -20,9 +25,9 @@ function App() {
           <Route path="/income" element={<IncomeDashboard />} />
           <Route path="/income/add" element={<AddEditIncome />} />
           <Route path="/income/edit/:id" element={<AddEditIncome />} />
+          <Route path="/budget" element={<BudgetDashboard />} />
+          <Route path="/budget-tracker" element={<BudgetTrackerPage />} />
 
-
-          
       </Routes>
     </div>
    </Router>

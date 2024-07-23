@@ -8,6 +8,7 @@ const verifyToken = require('./verifyToken')
 const authRoutes = require('./routes/authRoutes');
 const expenseroutes = require('./routes/expenseroutes');
 const incomeroutes = require('./routes/incomeroutes');
+const budgetRoutes = require('./routes/budgetRoutes');
 
 require('dotenv').config();
 
@@ -17,8 +18,8 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // MongoDB connection URI
-const uri = "mongodb+srv://ardisyla:tUFecdqXCdSV1ui4@ushtrim.s9hqctj.mongodb.net/?retryWrites=true&w=majority&appName=Ushtrim";
-mongoose.connect(uri, {});
+const uri = process.env.MONGODB_URI;
+mongoose.connect(uri, { });
 
 // Once MongoDB connection is open, log a success message
 const connection = mongoose.connection;
@@ -37,6 +38,13 @@ app.use('/api', authRoutes);
 app.use('/api/expenses', expenseroutes);
 
 app.use('/api/incomes', incomeroutes);
+
+app.use('/api/budgets', budgetRoutes);
+
+
+
+
+
 
 
 

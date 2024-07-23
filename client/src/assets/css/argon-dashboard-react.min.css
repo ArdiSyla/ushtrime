@@ -630,6 +630,7 @@ pre code {
   width: 100%;
   padding-right: 15px;
   padding-left: 15px;
+  margin-left: 20%;
 }
 .col {
   flex-basis: 0;

@@ -3,12 +3,24 @@ const Expense = require('../Models/Expense');
 const verifyToken = require('../verifyToken');
 const router = express.Router();
 
+
+
 router.post('/', verifyToken, async (req, res) => {
+    
     console.log('post expense');
 
     const { category, amount, description, date, paid } = req.body;
 
     try {
+
+
+//me shtu ni check a je tu e tejkalu bugjetin e planifikum
+
+//tek bugjeti me lan veq me shtu mujore apo vjetore
+
+//agonb
+
+
         const newExpense = new Expense({
             user: req.user.id,
             category,

@@ -23,6 +23,13 @@ function Sidebar() {
                     <li>
                         <Link to="/income">Income</Link>
                     </li>
+                    <li>
+                        <Link to="/budget">Budgets</Link>
+                    </li>
+                    <li>
+                        <Link to="/budget-tracker">Budget Tracker</Link>
+                    </li>
+                    
                 </ul>
             </div>
         </div>

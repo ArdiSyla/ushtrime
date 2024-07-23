@@ -1,0 +1,121 @@
+/* Main container styles */
+.budget-tracker-container {
+    display: flex;
+    height: 100vh; /* Full viewport height */
+}
+
+/* Main content area styles */
+.main-content {
+    flex-grow: 1;
+    margin-left: 200px; /* Space for the sidebar */
+    padding: 20px;
+    transition: margin-left 0.5s ease; /* Smooth transition for when sidebar opens/closes */
+    width: calc(100% - 200px); /* Adjust width to fit within the remaining space */
+    max-width: 1200px; /* Maximum width for content */
+    margin: 0 auto; /* Center the content horizontally */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Adjust content margin when sidebar is open */
+.sidebar.open + .main-content {
+    margin-left: 0; /* Remove left margin when sidebar is open */
+    width: 100%; /* Ensure full width when sidebar is open */
+}
+
+/* Tabs container styles */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Tab button styles */
+.tab-button {
+    background-color: #f0f0f0;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.tab-button.active {
+    background-color: #ccc;
+    transform: scale(1.05); /* Slightly enlarge the active button */
+}
+
+/* View mode button styles */
+.view-mode-button {
+    background-color: #007bff; /* Primary color for the button */
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 16px; /* Adjust font size if needed */
+    margin-right: 10px; /* Add margin to create space between buttons */
+}
+
+.view-mode-button:last-of-type {
+    margin-right: 0; /* Remove margin for the last button */
+}
+
+.view-mode-button:hover {
+    background-color: #0056b3; /* Darker shade for hover effect */
+}
+
+.view-mode-button:active {
+    background-color: #004494; /* Even darker shade for active effect */
+    transform: scale(0.98); /* Slightly shrink the button when pressed */
+}
+
+/* Heading styles */
+h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+/* Card styles */
+.card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    position: relative; /* Ensure card is above other content */
+    z-index: 500; /* Ensure card is above other elements */
+}
+
+/* List styles */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* No data message */
+.no-data-message {
+    color: #999;
+}
+
+/* Chart container */
+.chart-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.chart-container canvas {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
